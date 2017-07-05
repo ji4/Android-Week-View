@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -18,7 +17,7 @@ import java.util.GregorianCalendar;
 public class EditEvent extends AppCompatActivity {
     Button btn_startDate, btn_startTime, btn_endDate, btn_endTime;
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
-    TimePickerDialog timePickerDialog;
+    TimePickerDialog startTimePickerDialog, endTimePickerDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,7 @@ public class EditEvent extends AppCompatActivity {
                 calendar.get(Calendar.DAY_OF_MONTH));
 
 
-        timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+        startTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             //將時間轉為12小時製顯示出來
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -64,6 +63,16 @@ public class EditEvent extends AppCompatActivity {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
 
+        endTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            //將時間轉為12小時製顯示出來
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                btn_endTime.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
+                        + ":" + minute + " " + (hourOfDay > 12 ? "下午" : "上午"));
+            }
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE),
+                false);
+
 
 
         //Button Click Listeners
@@ -77,7 +86,7 @@ public class EditEvent extends AppCompatActivity {
         btn_startTime.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                timePickerDialog.show();
+                startTimePickerDialog.show();
             }
         });
 
@@ -88,12 +97,15 @@ public class EditEvent extends AppCompatActivity {
             }
         });
 
+        btn_endTime.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                endTimePickerDialog.show();
+            }
+        });
 
+        }
 
-
-
-
-    }
 
     public String getDayOfWeek(int year, int monthOfYear, int dayOfMonth){
         SimpleDateFormat simpledateformat = new SimpleDateFormat("EEEE");
