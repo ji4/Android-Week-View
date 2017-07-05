@@ -17,7 +17,7 @@ import java.util.GregorianCalendar;
 
 public class EditEvent extends AppCompatActivity {
     Button btn_startDate, btn_startTime, btn_endDate, btn_endTime;
-    DatePickerDialog datePickerDialog;
+    DatePickerDialog startDatePickerDialog, endDatePickerDialog;
     TimePickerDialog timePickerDialog;
 
     @Override
@@ -30,13 +30,12 @@ public class EditEvent extends AppCompatActivity {
         setStartAndEndTime();
 
         GregorianCalendar calendar = new GregorianCalendar();
-        datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        startDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             //將設定的日期顯示出來
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                monthOfYear += 1; //fix month
-                String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth);
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
+                monthOfYear += 1; //monthOfYear starts from 0
                 btn_startDate.setText(year + " 年 " + monthOfYear + " 月 " + dayOfMonth + " 日 " + dayOfWeek);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
@@ -53,12 +52,25 @@ public class EditEvent extends AppCompatActivity {
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE),
                 false);
 
+        endDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() { //not completely set yet
+            //將設定的日期顯示出來
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
+                monthOfYear += 1; //monthOfYear starts from 0
+                btn_endDate.setText(year + " 年 " + monthOfYear + " 月 " + dayOfMonth + " 日 " + dayOfWeek);
+            }
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+
+
 
         //Button Click Listeners
         btn_startDate.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                datePickerDialog.show();
+                startDatePickerDialog.show();
             }
         });
 
@@ -72,7 +84,7 @@ public class EditEvent extends AppCompatActivity {
         btn_endDate.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                endDatePickerDialog.show();
             }
         });
 
