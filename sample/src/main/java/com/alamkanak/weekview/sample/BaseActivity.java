@@ -1,5 +1,6 @@
 package com.alamkanak.weekview.sample;
 
+import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -91,7 +92,9 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
                 if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
                     item.setChecked(!item.isChecked());
                     mWeekViewType = TYPE_THREE_DAY_VIEW;
-                    mWeekView.setNumberOfVisibleDays(3);
+//                    mWeekView.setNumberOfVisibleDays(3);
+                    Intent it = new Intent(BaseActivity.this, MonthView.class);
+                    startActivity(it);
 
                     // Lets change some dimensions to best fit the view.
                     mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
