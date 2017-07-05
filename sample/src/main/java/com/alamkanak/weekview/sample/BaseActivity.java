@@ -28,6 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
+    private static final int TYPE_MONTH_VIEW = 4;
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     private WeekView mWeekView;
 
@@ -92,9 +93,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
                 if (mWeekViewType != TYPE_THREE_DAY_VIEW) {
                     item.setChecked(!item.isChecked());
                     mWeekViewType = TYPE_THREE_DAY_VIEW;
-//                    mWeekView.setNumberOfVisibleDays(3);
-                    Intent it = new Intent(BaseActivity.this, MonthView.class);
-                    startActivity(it);
+                    mWeekView.setNumberOfVisibleDays(3);
 
                     // Lets change some dimensions to best fit the view.
                     mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
@@ -112,6 +111,16 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
                     mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
                     mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
                     mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                }
+                return true;
+            case R.id.action_month_view:
+                if (mWeekViewType != TYPE_MONTH_VIEW) {
+                    item.setChecked(!item.isChecked());
+                    mWeekViewType = TYPE_MONTH_VIEW;
+                    Intent it = new Intent(BaseActivity.this, MonthView.class);
+                    startActivity(it);
+                    this.finish();
+
                 }
                 return true;
         }
