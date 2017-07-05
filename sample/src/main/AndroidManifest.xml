@@ -20,11 +20,12 @@
         </activity>
         <activity
             android:name=".BasicActivity"
-            android:label="@string/title_activity_basic"></activity>
+            android:label="@string/title_activity_basic" />
         <activity
             android:name=".AsynchronousActivity"
-            android:label="@string/title_activity_asynchronous"></activity>
-        <activity android:name=".MonthView"></activity>
+            android:label="@string/title_activity_asynchronous" />
+        <activity android:name=".MonthView" />
+        <activity android:name=".EditEvent"></activity>
     </application>
 
 </manifest>
