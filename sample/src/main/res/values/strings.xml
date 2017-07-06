@@ -16,4 +16,5 @@
     <string name="editevent_target">對象</string>
     <string name="editevent_location">地點</string>
     <string name="editevent_eventlocation">活動地點</string>
+    <string name="editevent_save">儲存</string>
 </resources>

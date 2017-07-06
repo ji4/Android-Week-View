@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 
 public class EditEvent extends AppCompatActivity {
     Button btn_startDate, btn_startTime, btn_endDate, btn_endTime;
+    Button btn_save;
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
     TimePickerDialog startTimePickerDialog, endTimePickerDialog;
 
@@ -74,7 +75,6 @@ public class EditEvent extends AppCompatActivity {
                 false);
 
 
-
         //Button Click Listeners
         btn_startDate.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -82,25 +82,29 @@ public class EditEvent extends AppCompatActivity {
                 startDatePickerDialog.show();
             }
         });
-
         btn_startTime.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startTimePickerDialog.show();
             }
         });
-
         btn_endDate.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 endDatePickerDialog.show();
             }
         });
-
         btn_endTime.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 endTimePickerDialog.show();
+            }
+        });
+
+        btn_save.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -120,6 +124,7 @@ public class EditEvent extends AppCompatActivity {
         btn_startTime = (Button) findViewById(R.id.activity_edit_event_btn_startTime);
         btn_endDate = (Button) findViewById(R.id.activity_edit_event_btn_endDate);
         btn_endTime = (Button) findViewById(R.id.activity_edit_event_btn_endTime);
+        btn_save = (Button) findViewById(R.id.activity_edit_event_btn_save);
     }
 
     public void setStartAndEndTime(){
