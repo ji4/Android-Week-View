@@ -17,8 +17,8 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     FeedReaderContract.FeedEntry._ID + " INTEGER PRIMARY KEY," +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
-                    FeedReaderContract.FeedEntry.startTime + TEXT_TYPE + COMMA_SEP +
-                    FeedReaderContract.FeedEntry.endTime + TEXT_TYPE +
+                    FeedReaderContract.FeedEntry.START_TIME + TEXT_TYPE + COMMA_SEP +
+                    FeedReaderContract.FeedEntry.END_TIME + TEXT_TYPE +
                     // Any other options for the CREATE command
                     " )";
 

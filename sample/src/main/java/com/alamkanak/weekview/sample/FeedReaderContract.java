@@ -19,8 +19,8 @@ public class FeedReaderContract {
         public static final String COLUMN_NAME_ENTRY_ID = "entryid";
         public static final String COLUMN_NAME_TITLE = "event";
         public static final String COLUMN_NAME_NULLABLE = "nodata";
-        public static final String startTime = "startTime";
-        public static final String endTime = "endTime";
+        public static final String START_TIME = "startTime";
+        public static final String END_TIME = "endTime";
 //        public static final String COLUMN_NAME_SUBTITLE = "subtitle";
 
 

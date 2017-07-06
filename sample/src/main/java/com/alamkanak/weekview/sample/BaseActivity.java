@@ -177,7 +177,8 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
 
     @Override
     public void onEmptyViewClicked(Calendar time){
-        Toast.makeText(this, "bbb Empty view  pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(BaseActivity.this, EditEvent.class);
+        startActivity(intent);
     }
 
     public WeekView getWeekView() {
