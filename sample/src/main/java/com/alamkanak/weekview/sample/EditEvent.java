@@ -4,17 +4,22 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import com.alamkanak.weekview.WeekViewEvent;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
-public class EditEvent extends AppCompatActivity {
+public class EditEvent extends BaseActivity {
     Button btn_startDate, btn_startTime, btn_endDate, btn_endTime;
     Button btn_save;
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
@@ -30,10 +35,15 @@ public class EditEvent extends AppCompatActivity {
         setStartAndEndTime();
 
         GregorianCalendar calendar = new GregorianCalendar();
+        final Calendar selectedStartTime = Calendar.getInstance();
+        final Calendar selectedEndTime = Calendar.getInstance();
+
         startDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             //將設定的日期顯示出來
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                selectedStartTime.set(year, monthOfYear, dayOfMonth);
+
                 String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
                 monthOfYear += 1; //monthOfYear starts from 0
                 btn_startDate.setText(year + " 年 " + monthOfYear + " 月 " + dayOfMonth + " 日 " + dayOfWeek);
@@ -46,6 +56,9 @@ public class EditEvent extends AppCompatActivity {
             //將時間轉為12小時製顯示出來
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                selectedStartTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                selectedStartTime.set(Calendar.MINUTE, minute);
+
                 btn_startTime.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
                 + ":" + minute + " " + (hourOfDay > 12 ? "下午" : "上午"));
             }
@@ -57,6 +70,8 @@ public class EditEvent extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
+                selectedEndTime.set(year, monthOfYear, dayOfMonth);
+
                 String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
                 monthOfYear += 1; //monthOfYear starts from 0
                 btn_endDate.setText(year + " 年 " + monthOfYear + " 月 " + dayOfMonth + " 日 " + dayOfWeek);
@@ -68,6 +83,9 @@ public class EditEvent extends AppCompatActivity {
             //將時間轉為12小時製顯示出來
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                selectedEndTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                selectedEndTime.set(Calendar.MINUTE, minute);
+
                 btn_endTime.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
                         + ":" + minute + " " + (hourOfDay > 12 ? "下午" : "上午"));
             }
@@ -104,10 +122,9 @@ public class EditEvent extends AppCompatActivity {
         btn_save.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                saveEventData(selectedStartTime, selectedEndTime);
             }
         });
-
         }
 
 
@@ -153,6 +170,10 @@ public class EditEvent extends AppCompatActivity {
         btn_endTime.setText(strEndTime);
 
 
+    }
+
+    public void saveEventData(Calendar startTime, Calendar endTime){
+        WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
     }
 
 }
