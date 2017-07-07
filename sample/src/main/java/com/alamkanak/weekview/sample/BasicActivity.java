@@ -1,13 +1,9 @@
 package com.alamkanak.weekview.sample;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.util.Log;
-
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -16,13 +12,15 @@ import java.util.List;
  * Website: http://alamkanak.github.io
  */
 public class BasicActivity extends BaseActivity {
+    private boolean eventMatches(WeekViewEvent event, int year, int month) {
+        return (event.getStartTime().get(Calendar.YEAR) == year && event.getStartTime().get(Calendar.MONTH) == month - 1) || (event.getEndTime().get(Calendar.YEAR) == year && event.getEndTime().get(Calendar.MONTH) == month - 1);
+    }
+
+
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
 
-        Log.d("jia", "onMonthChange()");
-
-
-        // Populate the week view with some events.
+        ////////
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
         //Get saved data from DB
@@ -33,8 +31,14 @@ public class BasicActivity extends BaseActivity {
             events.add(event);
         }
 
-        return events;
-
+        // Return only the events that matches newYear and newMonth.
+        List<WeekViewEvent> matchedEvents = new ArrayList<WeekViewEvent>();
+        for (WeekViewEvent event : events) {
+            if (eventMatches(event, newYear, newMonth)) {
+                matchedEvents.add(event);
+            }
+        }
+        return matchedEvents;
     }
 
 }
