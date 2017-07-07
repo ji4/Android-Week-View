@@ -2,6 +2,7 @@ package com.alamkanak.weekview.sample;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -57,34 +58,37 @@ public class EditEvent extends BaseActivity {
     }
 
     public void setStartAndEndTime(){
+        Intent it = this.getIntent();
+        long timeMillis = it.getLongExtra("timeMillis", 0);
+
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy 年 MM 月 dd 日, EEE");
         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
 
-        setStartDate(dateFormatter);
-        setStartTime(timeFormatter);
+        setStartDate(dateFormatter, timeMillis);
+        setStartTime(timeFormatter, timeMillis);
 
-        setEndDate(dateFormatter);
-        setEndTime(timeFormatter);
+        setEndDate(dateFormatter, timeMillis);
+        setEndTime(timeFormatter, timeMillis);
 
     }
 
-    public void setStartDate(SimpleDateFormat dateFormatter){//start date
-        Date currentDate = new Date(System.currentTimeMillis());
-        String strDate = dateFormatter.format(currentDate);
+    public void setStartDate(SimpleDateFormat dateFormatter, long timeMillis){//start date
+        Date startDate = new Date(timeMillis);
+        String strDate = dateFormatter.format(startDate);
         btn_startDate.setText(strDate);
     }
-    public void setStartTime(SimpleDateFormat timeFormatter) {//start time
-        Date currentTime = new Date(System.currentTimeMillis());
-        String strStartTime = timeFormatter.format(currentTime);
+    public void setStartTime(SimpleDateFormat timeFormatter, long timeMillis) {//start time
+        Date startTime = new Date(timeMillis);
+        String strStartTime = timeFormatter.format(startTime);
         btn_startTime.setText(strStartTime);
     }
-    public void setEndDate(SimpleDateFormat dateFormatter){//end date
-        Date endDate = new Date(System.currentTimeMillis() + TIME_INTERVAL);
+    public void setEndDate(SimpleDateFormat dateFormatter, long timeMillis){//end date
+        Date endDate = new Date(timeMillis + TIME_INTERVAL);
         String strEndDate = dateFormatter.format(endDate);
         btn_endDate.setText(strEndDate);
     }
-    public void setEndTime(SimpleDateFormat timeFormatter){//end time
-        Date endTime = new Date(System.currentTimeMillis() + TIME_INTERVAL);
+    public void setEndTime(SimpleDateFormat timeFormatter, long timeMillis){//end time
+        Date endTime = new Date(timeMillis + TIME_INTERVAL);
         String strEndTime = timeFormatter.format(endTime);
         btn_endTime.setText(strEndTime);
 

@@ -160,6 +160,10 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
     }
 
+    protected long getEventTime(Calendar time) {
+        return time.getTimeInMillis();
+    }
+
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
         Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
@@ -177,8 +181,11 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
 
     @Override
     public void onEmptyViewClicked(Calendar time){
-        Intent intent = new Intent(BaseActivity.this, EditEvent.class);
-        startActivity(intent);
+        Toast.makeText(this, "bbb Empty view  pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
+
+        Intent it = new Intent(BaseActivity.this, EditEvent.class);
+        it.putExtra("timeMillis", getEventTime(time));
+        startActivity(it);
     }
 
     public WeekView getWeekView() {
