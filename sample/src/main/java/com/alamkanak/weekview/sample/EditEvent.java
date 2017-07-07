@@ -12,6 +12,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import com.alamkanak.weekview.WeekViewEvent;
+import com.alamkanak.weekview.WeekViewLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -25,6 +26,7 @@ public class EditEvent extends BaseActivity {
     Button btn_save;
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
     TimePickerDialog startTimePickerDialog, endTimePickerDialog;
+    long TIME_INTERVAL = 600000; //10 mins
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class EditEvent extends BaseActivity {
         GregorianCalendar calendar = new GregorianCalendar();
         final Calendar selectedStartTime = Calendar.getInstance();
         final Calendar selectedEndTime = Calendar.getInstance();
+        Calendar addTime = Calendar.getInstance();
+        addTime.setTimeInMillis(TIME_INTERVAL);
 
         startDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             //將設定的日期顯示出來
@@ -90,7 +94,7 @@ public class EditEvent extends BaseActivity {
                 btn_endTime.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
                         + ":" + minute + " " + (hourOfDay > 12 ? "下午" : "上午"));
             }
-        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE),
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE) + addTime.get(Calendar.MINUTE),
                 false);
 
 
@@ -147,8 +151,6 @@ public class EditEvent extends BaseActivity {
     }
 
     public void setStartAndEndTime(){
-        long TIME_INTERVAL = 600000; //10 mins
-
         //start date
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy 年 MM 月 dd 日, EEE");
         Date currentDate = new Date(System.currentTimeMillis());
@@ -181,7 +183,9 @@ public class EditEvent extends BaseActivity {
         long endTimeMillis = endTime.getTimeInMillis();
 
         DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis);
-        Log.d("jia", "saveEventData() called");
+
+
+
     }
 
     @Override
