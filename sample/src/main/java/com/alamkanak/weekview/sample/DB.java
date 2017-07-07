@@ -10,6 +10,7 @@ import com.alamkanak.weekview.sample.FeedReaderContract.FeedEntry;
 
 import com.alamkanak.weekview.WeekViewEvent;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -42,8 +43,12 @@ public class DB extends BaseActivity{
                 FeedEntry.COLUMN_NAME_NULLABLE,
                 values);
 
+        Log.d("jia", "newRowId:　"+newRowId);
+
     }
-    public static EventData getData(Context context) {
+
+
+    public static ArrayList<EventData> getData(Context context) {
         FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         EventData eventData = null;
@@ -64,38 +69,44 @@ public class DB extends BaseActivity{
         Cursor cursor = db.query(
                 FeedEntry.TABLE_NAME,  // The table to query
                 projection,                               // The columns to return
-                FeedEntry.COLUMN_NAME_ENTRY_ID + "=?"/*selection*/,                                // The columns for the WHERE clause
-                new String[]{"1"} /*selectionArgs*/,                            // The values for the WHERE clause
+                FeedEntry.COLUMN_NAME_TITLE + "=?"/*selection*/,                                // The columns for the WHERE clause
+                new String[]{"myEvent"} /*selectionArgs*/,                            // The values for the WHERE clause
                 null,                                     // don't group the rows
                 null,                                     // don't filter by row groups
                 sortOrder                                 // The sort order
         );
 
+        ArrayList<EventData> eventDataArrayList = new ArrayList<>();
+
         if (cursor != null && cursor.moveToFirst()) {
             cursor.moveToFirst();
 
-            long startTimeMillisec = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(FeedEntry.START_TIME)
-            );
-            long endTimeMillisec = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(FeedEntry.END_TIME)
-            );
+            while(cursor.moveToNext()) {
+                long startTimeMillisec = cursor.getLong(
+                        cursor.getColumnIndexOrThrow(FeedEntry.START_TIME)
+                );
+                long endTimeMillisec = cursor.getLong(
+                        cursor.getColumnIndexOrThrow(FeedEntry.END_TIME)
+                );
 
-            Calendar startTime = Calendar.getInstance();
-            startTime.setTimeInMillis(startTimeMillisec);
-            Log.d("jia", "startTime: " + String.valueOf(startTime));
+                Calendar startTime = Calendar.getInstance();
+                startTime.setTimeInMillis(startTimeMillisec);
+                Log.d("jia", "startTime: " + String.valueOf(startTime));
 
-            Calendar endTime = Calendar.getInstance();
-            endTime.setTimeInMillis(endTimeMillisec);
-            Log.d("jia", "endTime: " + String.valueOf(endTime));
+                Calendar endTime = Calendar.getInstance();
+                endTime.setTimeInMillis(endTimeMillisec);
+                Log.d("jia", "endTime: " + String.valueOf(endTime));
 
+                eventData = new EventData(startTime, endTime);
+                eventDataArrayList.add(eventData.getEventData());
+            }
             cursor.close();
 
-            eventData = new EventData(startTime, endTime);
+
 
         }
-        if(eventData!=null)
-           return eventData.getEventData();
+        if(!eventDataArrayList.isEmpty())
+            return eventDataArrayList;
         return null;
     }
     @Override
@@ -112,8 +123,7 @@ class EventData{
     }
 
     EventData getEventData(){
-        EventData eventData = new EventData(startTime, endTime);
-        return eventData;
+        return new EventData(startTime, endTime);
     }
 
 }

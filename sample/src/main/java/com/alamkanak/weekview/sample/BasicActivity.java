@@ -20,15 +20,18 @@ public class BasicActivity extends BaseActivity {
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
 
-        ////////
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
         //Get saved data from DB
-        EventData eventData = DB.getData(getApplicationContext());
-        if(eventData != null) {
-            WeekViewEvent event = new WeekViewEvent(1, getEventTitle(eventData.startTime), eventData.startTime, eventData.endTime);
-            event.setColor(getResources().getColor(R.color.event_color_01));
-            events.add(event);
+        ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext());
+        if(eventDataArrayList != null) {
+            int i = 0;
+            while(i < eventDataArrayList.size()) {
+                WeekViewEvent event = new WeekViewEvent(1, getEventTitle(eventDataArrayList.get(i).startTime), eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
+                event.setColor(getResources().getColor(R.color.event_color_01));
+                events.add(event);
+                i++;
+            }
         }
 
         // Return only the events that matches newYear and newMonth.
