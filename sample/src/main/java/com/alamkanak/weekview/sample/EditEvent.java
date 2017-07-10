@@ -27,6 +27,8 @@ public class EditEvent extends BaseActivity {
     long TIME_INTERVAL = 600000; //10 mins
     Calendar selectedStartTime = Calendar.getInstance();
     Calendar selectedEndTime = Calendar.getInstance();
+    long clickedTimeMillis;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +61,16 @@ public class EditEvent extends BaseActivity {
 
     public void setStartAndEndTime(){
         Intent it = this.getIntent();
-        long timeMillis = it.getLongExtra("timeMillis", 0);
+        clickedTimeMillis = it.getLongExtra("timeMillis", 0);
 
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy 年 MM 月 dd 日, EEE");
         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
 
-        setStartDate(dateFormatter, timeMillis);
-        setStartTime(timeFormatter, timeMillis);
+        setStartDate(dateFormatter, clickedTimeMillis);
+        setStartTime(timeFormatter, clickedTimeMillis);
 
-        setEndDate(dateFormatter, timeMillis);
-        setEndTime(timeFormatter, timeMillis);
+        setEndDate(dateFormatter, clickedTimeMillis);
+        setEndTime(timeFormatter, clickedTimeMillis);
 
     }
 
@@ -96,6 +98,8 @@ public class EditEvent extends BaseActivity {
 
     public void defineAllDialogs(){
         GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTimeInMillis(clickedTimeMillis);
+
         Calendar addTime = Calendar.getInstance();
         addTime.setTimeInMillis(TIME_INTERVAL);
 
