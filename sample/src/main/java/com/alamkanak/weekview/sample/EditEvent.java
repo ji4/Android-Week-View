@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TimePicker;
 
 import com.alamkanak.weekview.WeekViewEvent;
@@ -22,6 +23,8 @@ import java.util.List;
 public class EditEvent extends BaseActivity {
     Button btn_startDate, btn_startTime, btn_endDate, btn_endTime;
     Button btn_save;
+    EditText et_eventName, et_eventTarget, et_eventLocation;
+    String strEventName = null, strEventTarget = null, strEventLocation = null;
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
     TimePickerDialog startTimePickerDialog, endTimePickerDialog;
     long TIME_INTERVAL = 600000; //10 mins
@@ -56,6 +59,11 @@ public class EditEvent extends BaseActivity {
         btn_startTime = (Button) findViewById(R.id.activity_edit_event_btn_startTime);
         btn_endDate = (Button) findViewById(R.id.activity_edit_event_btn_endDate);
         btn_endTime = (Button) findViewById(R.id.activity_edit_event_btn_endTime);
+
+        et_eventName = (EditText) findViewById(R.id.activity_edit_event_et_eventName);
+        et_eventLocation = (EditText) findViewById(R.id.activity_edit_event_et_eventLocation);
+        et_eventTarget = (EditText) findViewById(R.id.activity_edit_event_et_eventTarget);
+
         btn_save = (Button) findViewById(R.id.activity_edit_event_btn_save);
     }
 
@@ -193,10 +201,18 @@ public class EditEvent extends BaseActivity {
     public void saveEventData(Calendar startTime, Calendar endTime){
         Log.d("jia", String.valueOf(startTime));
         Log.d("jia", String.valueOf(endTime));
+        getInputData();
+
         long startTimeMillis = startTime.getTimeInMillis();
         long endTimeMillis = endTime.getTimeInMillis();
 
-        DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis);
+        DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName,strEventTarget, strEventLocation);
+    }
+
+    public void getInputData(){
+        strEventName = et_eventName.getText().toString().trim();
+        strEventTarget = et_eventTarget.getText().toString().trim();
+        strEventLocation = et_eventLocation.getText().toString().trim();
     }
 
     @Override

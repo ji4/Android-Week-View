@@ -22,7 +22,7 @@ public class DB extends BaseActivity{
     public DB() {
     }
 
-    public static void saveData(Context context, long startTimeMillis, long endTimeMillis) {
+    public static void saveData(Context context, long startTimeMillis, long endTimeMillis, String eventName, String eventTarget, String eventLocation) {
         //若要存取您的資料庫，請啟動 SQLiteOpenHelper 的子類別：
         FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
 
@@ -35,6 +35,9 @@ public class DB extends BaseActivity{
         values.put(FeedEntry.COLUMN_NAME_TITLE, "myEvent");
         values.put(FeedEntry.START_TIME, startTimeMillis);
         values.put(FeedEntry.END_TIME, endTimeMillis);
+        values.put(FeedEntry.COLUMN_NAME_EVENT_NAME, eventName);
+        values.put(FeedEntry.COLUMN_NAME_EVENT_TARGET, eventTarget);
+        values.put(FeedEntry.COLUMN_NAME_EVENT_LOCATION, eventLocation);
 
         // Insert the new row, returning the primary key value of the new row
         long newRowId;
