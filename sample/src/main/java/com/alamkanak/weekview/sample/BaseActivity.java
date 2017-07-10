@@ -1,9 +1,12 @@
 package com.alamkanak.weekview.sample;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +69,37 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
+        SearchView searchView;
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) searchItem.getActionView();
+
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Log.e("onQueryTextChange", "called");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Do your task here
+                Intent it = new Intent(BaseActivity.this, SearchableActivity.class);
+                it.putExtra("query", query);
+                startActivity(it);
+
+                return false;
+            }
+        });
+
+        // 這邊讓icon可以還原到搜尋的icon
+        searchView.setIconifiedByDefault(true);
+
         return true;
     }
 
@@ -74,6 +108,8 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
         int id = item.getItemId();
         setupDateTimeInterpreter(id == R.id.action_week_view);
         switch (id){
+            case R.id.action_search:
+                return true;
             case R.id.action_today:
                 mWeekView.goToToday();
                 return true;
@@ -156,7 +192,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
         });
     }
 
-    protected String getEventTitle(Calendar time) {
+    protected static String getEventTitle(Calendar time) {
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
     }
 

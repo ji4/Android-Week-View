@@ -206,13 +206,25 @@ public class EditEvent extends BaseActivity {
         long startTimeMillis = startTime.getTimeInMillis();
         long endTimeMillis = endTime.getTimeInMillis();
 
-        DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName,strEventTarget, strEventLocation);
+        DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
     }
 
     public void getInputData(){
         strEventName = et_eventName.getText().toString().trim();
         strEventTarget = et_eventTarget.getText().toString().trim();
         strEventLocation = et_eventLocation.getText().toString().trim();
+
+        if(strEventName.length() == 0)
+            strEventName = null;
+        if(strEventTarget.length() == 0)
+            strEventTarget = null;
+        if(strEventLocation.length() == 0)
+            strEventLocation = null;
+
+        Log.d("jia", "strEventName: "+String.valueOf(strEventName));
+        Log.d("jia", "strEventTarget: "+String.valueOf(strEventTarget));
+        Log.d("jia", "strEventLocation: "+String.valueOf(strEventLocation));
+
     }
 
     @Override

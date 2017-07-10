@@ -51,7 +51,7 @@ public class DB extends BaseActivity{
     }
 
 
-    public static ArrayList<EventData> getData(Context context) {
+    public static ArrayList<EventData> getData(Context context, String query) {
         FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         EventData eventData = null;
@@ -63,33 +63,65 @@ public class DB extends BaseActivity{
                 FeedEntry.COLUMN_NAME_TITLE,
                 FeedEntry.START_TIME,
                 FeedEntry.END_TIME,
+                FeedEntry.COLUMN_NAME_EVENT_NAME,
+                FeedEntry.COLUMN_NAME_EVENT_TARGET,
+                FeedEntry.COLUMN_NAME_EVENT_LOCATION
         };
 
         // How you want the results sorted in the resulting Cursor
         String sortOrder =
                 FeedEntry.START_TIME/*COLUMN_NAME_UPDATED*/ + " DESC";
 
-        Cursor cursor = db.query(
-                FeedEntry.TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                FeedEntry.COLUMN_NAME_TITLE + "=?"/*selection*/,                                // The columns for the WHERE clause
-                new String[]{"myEvent"} /*selectionArgs*/,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
+        Cursor cursor;
+        if(query == null) {
+            cursor = db.query(
+                    FeedEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    FeedEntry.COLUMN_NAME_TITLE + "=?"/*selection*/,                                // The columns for the WHERE clause
+                    new String[]{"myEvent"} /*selectionArgs*/,                            // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order
+            );
+            Log.d("jia", "query == null");
+        }
+        else{
+            cursor = db.query(
+                    FeedEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    FeedEntry.COLUMN_NAME_EVENT_NAME + "=?"/*selection*/,                                // The columns for the WHERE clause
+                    new String[]{query} /*selectionArgs*/,                            // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order
+            );
+            Log.d("jia", "query != null");
+
+        }
 
         ArrayList<EventData> eventDataArrayList = new ArrayList<>();
 
         if (cursor != null && cursor.moveToFirst()) {
+            Log.d("jia", "cursor.getCount: "+cursor.getCount());
             cursor.moveToFirst();
-
+            Log.d("jia", "cursor.moveToFirst();");
             while(cursor.moveToNext()) {
+                Log.d("jia", "cursor.moveToNext()");
                 long startTimeMillisec = cursor.getLong(
                         cursor.getColumnIndexOrThrow(FeedEntry.START_TIME)
                 );
+                Log.d("jia", "startTimeMillisec: " + String.valueOf(startTimeMillisec));
                 long endTimeMillisec = cursor.getLong(
                         cursor.getColumnIndexOrThrow(FeedEntry.END_TIME)
+                );
+                String eventName = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_NAME)
+                );
+                String eventTarget = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_TARGET)
+                );
+                String eventLocation = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_LOCATION)
                 );
 
                 Calendar startTime = Calendar.getInstance();
@@ -100,7 +132,7 @@ public class DB extends BaseActivity{
                 endTime.setTimeInMillis(endTimeMillisec);
                 Log.d("jia", "endTime: " + String.valueOf(endTime));
 
-                eventData = new EventData(startTime, endTime);
+                eventData = new EventData(startTime, endTime, eventName, eventTarget, eventLocation);
                 eventDataArrayList.add(eventData.getEventData());
             }
             cursor.close();
@@ -108,8 +140,11 @@ public class DB extends BaseActivity{
 
 
         }
-        if(!eventDataArrayList.isEmpty())
+        if(!eventDataArrayList.isEmpty()) {
+            Log.d("jia", "eventDataArrayList NOT EMPTY ");
             return eventDataArrayList;
+        }
+        Log.d("jia", "eventDataArrayList IS EMPTY ");
         return null;
     }
     @Override
@@ -119,14 +154,18 @@ public class DB extends BaseActivity{
 }
 class EventData{
     Calendar startTime, endTime;
+    String eventName, eventTarget, eventLocation;
 
-    public EventData(Calendar startTime, Calendar endTime) {
+    public EventData(Calendar startTime, Calendar endTime, String eventName, String eventTarget, String eventLocation) {
         this.startTime = startTime;
         this.endTime = endTime;
+        this.eventName = eventName;
+        this.eventTarget = eventTarget;
+        this.eventLocation = eventLocation;
     }
 
     EventData getEventData(){
-        return new EventData(startTime, endTime);
+        return new EventData(startTime, endTime, eventName, eventTarget, eventLocation);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.alamkanak.weekview.sample;
 
+import android.util.Log;
+
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.util.ArrayList;
@@ -23,25 +25,43 @@ public class BasicActivity extends BaseActivity {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
         //Get saved data from DB
-        ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext());
+        ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), null);
+        Log.d("jia", "eventDataArrayList: " + String.valueOf(eventDataArrayList));
         if(eventDataArrayList != null) {
+            Log.d("jia", "eventDataArrayList != null");
             int i = 0;
             while(i < eventDataArrayList.size()) {
                 WeekViewEvent event = new WeekViewEvent(1, getEventTitle(eventDataArrayList.get(i).startTime), eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
+                Log.d("jia", "startTime:　" + eventDataArrayList.get(i).startTime);
+                Log.d("jia", "eventName:　" + eventDataArrayList.get(i).eventName);
                 event.setColor(getResources().getColor(R.color.event_color_01));
                 events.add(event);
+                Log.d("jia", "i: "+i);
                 i++;
             }
         }
 
-        // Return only the events that matches newYear and newMonth.
-        List<WeekViewEvent> matchedEvents = new ArrayList<WeekViewEvent>();
-        for (WeekViewEvent event : events) {
-            if (eventMatches(event, newYear, newMonth)) {
-                matchedEvents.add(event);
-            }
-        }
-        return matchedEvents;
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(Calendar.HOUR_OF_DAY, 3);
+        startTime.set(Calendar.MINUTE, 0);
+        startTime.set(Calendar.MONTH, newMonth - 1);
+        startTime.set(Calendar.YEAR, newYear);
+        Calendar endTime = (Calendar) startTime.clone();
+        endTime.add(Calendar.HOUR, 1);
+        endTime.set(Calendar.MONTH, newMonth - 1);
+        WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
+        event.setColor(getResources().getColor(R.color.event_color_01));
+        events.add(event);
+
+//        // Return only the events that matches newYear and newMonth.
+//        List<WeekViewEvent> matchedEvents = new ArrayList<WeekViewEvent>();
+//        for (WeekViewEvent event : events) {
+//            if (eventMatches(event, newYear, newMonth)) {
+//                matchedEvents.add(event);
+//            }
+//        }
+//        return matchedEvents;
+        return events;
     }
 
 }

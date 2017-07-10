@@ -3,6 +3,7 @@ package com.alamkanak.weekview.sample;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by chiaying.wu on 2017/7/6.
@@ -18,7 +19,10 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     FeedReaderContract.FeedEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
                     FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                     FeedReaderContract.FeedEntry.START_TIME + TEXT_TYPE + COMMA_SEP +
-                    FeedReaderContract.FeedEntry.END_TIME + TEXT_TYPE +
+                    FeedReaderContract.FeedEntry.END_TIME + TEXT_TYPE + COMMA_SEP +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_EVENT_NAME + TEXT_TYPE + COMMA_SEP +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_EVENT_TARGET + TEXT_TYPE + COMMA_SEP +
+                    FeedReaderContract.FeedEntry.COLUMN_NAME_EVENT_LOCATION + TEXT_TYPE +
                     // Any other options for the CREATE command
                     " )";
 
@@ -36,6 +40,7 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     }
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_ENTRIES);
+        Log.d("jia", "SQL_CREATE_ENTRIES: "+SQL_CREATE_ENTRIES);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
