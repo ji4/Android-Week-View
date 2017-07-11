@@ -48,11 +48,11 @@ public class EditEvent extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Log.d("jia", "day of selectedStartTime: "+ String.valueOf(selectedStartTime));
-                if(selectedStartTimeMillis == clickedTimeMillis) { //default time
+//                if(selectedStartTimeMillis == clickedTimeMillis) { //default time
                     selectedStartTime.setTimeInMillis(selectedStartTimeMillis);
                     selectedEndTimeMillis = selectedStartTimeMillis + TIME_INTERVAL;
                     selectedEndTime.setTimeInMillis(selectedEndTimeMillis);
-                }
+//                }
 
                 saveEventData(selectedStartTime, selectedEndTime);
                 finish();

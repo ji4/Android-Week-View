@@ -54,7 +54,6 @@ public class DB extends BaseActivity{
     public static ArrayList<EventData> getData(Context context, String query) {
         FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        EventData eventData = null;
 
         // Define a projection that specifies which columns from the database
         // you will actually use after this query.
@@ -102,38 +101,10 @@ public class DB extends BaseActivity{
         ArrayList<EventData> eventDataArrayList = new ArrayList<>();
 
         if (cursor != null && cursor.moveToFirst()) {
-            Log.d("jia", "cursor.getCount: "+cursor.getCount());
             cursor.moveToFirst();
-            Log.d("jia", "cursor.moveToFirst();");
+            getAndAddDataToList(cursor, eventDataArrayList);
             while(cursor.moveToNext()) {
-                Log.d("jia", "cursor.moveToNext()");
-                long startTimeMillisec = cursor.getLong(
-                        cursor.getColumnIndexOrThrow(FeedEntry.START_TIME)
-                );
-                Log.d("jia", "startTimeMillisec: " + String.valueOf(startTimeMillisec));
-                long endTimeMillisec = cursor.getLong(
-                        cursor.getColumnIndexOrThrow(FeedEntry.END_TIME)
-                );
-                String eventName = cursor.getString(
-                        cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_NAME)
-                );
-                String eventTarget = cursor.getString(
-                        cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_TARGET)
-                );
-                String eventLocation = cursor.getString(
-                        cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_LOCATION)
-                );
-
-                Calendar startTime = Calendar.getInstance();
-                startTime.setTimeInMillis(startTimeMillisec);
-                Log.d("jia", "startTime: " + String.valueOf(startTime));
-
-                Calendar endTime = Calendar.getInstance();
-                endTime.setTimeInMillis(endTimeMillisec);
-                Log.d("jia", "endTime: " + String.valueOf(endTime));
-
-                eventData = new EventData(startTime, endTime, eventName, eventTarget, eventLocation);
-                eventDataArrayList.add(eventData.getEventData());
+                getAndAddDataToList(cursor, eventDataArrayList);
             }
             cursor.close();
 
@@ -147,6 +118,36 @@ public class DB extends BaseActivity{
         Log.d("jia", "eventDataArrayList IS EMPTY ");
         return null;
     }
+
+    public static void getAndAddDataToList(Cursor cursor, ArrayList eventDataArrayList){
+        long startTimeMillisec = cursor.getLong(
+                cursor.getColumnIndexOrThrow(FeedEntry.START_TIME)
+        );
+        long endTimeMillisec = cursor.getLong(
+                cursor.getColumnIndexOrThrow(FeedEntry.END_TIME)
+        );
+        String eventName = cursor.getString(
+                cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_NAME)
+        );
+        String eventTarget = cursor.getString(
+                cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_TARGET)
+        );
+        String eventLocation = cursor.getString(
+                cursor.getColumnIndexOrThrow(FeedEntry.COLUMN_NAME_EVENT_LOCATION)
+        );
+
+        Calendar startTime = Calendar.getInstance();
+        startTime.setTimeInMillis(startTimeMillisec);
+        Log.d("jia", "startTime: " + String.valueOf(startTime));
+
+        Calendar endTime = Calendar.getInstance();
+        endTime.setTimeInMillis(endTimeMillisec);
+        Log.d("jia", "endTime: " + String.valueOf(endTime));
+
+        EventData eventData = new EventData(startTime, endTime, eventName, eventTarget, eventLocation);
+        eventDataArrayList.add(eventData.getEventData());
+    }
+
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         return null;
