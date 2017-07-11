@@ -33,6 +33,7 @@ public class BasicActivity extends BaseActivity {
             while(i < eventDataArrayList.size()) {
                 WeekViewEvent event = new WeekViewEvent(1, getEventTitle(eventDataArrayList.get(i).startTime), eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
                 Log.d("jia", "startTime:　" + eventDataArrayList.get(i).startTime);
+                Log.d("jia", "endTime:　  " + eventDataArrayList.get(i).endTime);
                 Log.d("jia", "eventName:　" + eventDataArrayList.get(i).eventName);
                 event.setColor(getResources().getColor(R.color.event_color_01));
                 events.add(event);
@@ -41,27 +42,14 @@ public class BasicActivity extends BaseActivity {
             }
         }
 
-        Calendar startTime = Calendar.getInstance();
-        startTime.set(Calendar.HOUR_OF_DAY, 3);
-        startTime.set(Calendar.MINUTE, 0);
-        startTime.set(Calendar.MONTH, newMonth - 1);
-        startTime.set(Calendar.YEAR, newYear);
-        Calendar endTime = (Calendar) startTime.clone();
-        endTime.add(Calendar.HOUR, 1);
-        endTime.set(Calendar.MONTH, newMonth - 1);
-        WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
-        event.setColor(getResources().getColor(R.color.event_color_01));
-        events.add(event);
-
-//        // Return only the events that matches newYear and newMonth.
-//        List<WeekViewEvent> matchedEvents = new ArrayList<WeekViewEvent>();
-//        for (WeekViewEvent event : events) {
-//            if (eventMatches(event, newYear, newMonth)) {
-//                matchedEvents.add(event);
-//            }
-//        }
-//        return matchedEvents;
-        return events;
+        // Return only the events that matches newYear and newMonth.
+        List<WeekViewEvent> matchedEvents = new ArrayList<WeekViewEvent>();
+        for (WeekViewEvent event : events) {
+            if (eventMatches(event, newYear, newMonth)) {
+                matchedEvents.add(event);
+            }
+        }
+        return matchedEvents;
     }
 
 }

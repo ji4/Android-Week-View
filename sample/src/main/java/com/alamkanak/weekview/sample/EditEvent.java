@@ -31,6 +31,7 @@ public class EditEvent extends BaseActivity {
     Calendar selectedStartTime = Calendar.getInstance();
     Calendar selectedEndTime = Calendar.getInstance();
     long clickedTimeMillis;
+    long selectedStartTimeMillis = 0, selectedEndTimeMillis = 0;
 
 
     @Override
@@ -46,6 +47,13 @@ public class EditEvent extends BaseActivity {
         btn_save.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("jia", "day of selectedStartTime: "+ String.valueOf(selectedStartTime));
+                if(selectedStartTimeMillis == clickedTimeMillis) { //default time
+                    selectedStartTime.setTimeInMillis(selectedStartTimeMillis);
+                    selectedEndTimeMillis = selectedStartTimeMillis + TIME_INTERVAL;
+                    selectedEndTime.setTimeInMillis(selectedEndTimeMillis);
+                }
+
                 saveEventData(selectedStartTime, selectedEndTime);
                 finish();
             }
@@ -108,6 +116,8 @@ public class EditEvent extends BaseActivity {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(clickedTimeMillis);
 
+        selectedStartTimeMillis = clickedTimeMillis;
+
         Calendar addTime = Calendar.getInstance();
         addTime.setTimeInMillis(TIME_INTERVAL);
 
@@ -115,6 +125,7 @@ public class EditEvent extends BaseActivity {
             //將設定的日期顯示出來
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                selectedStartTimeMillis = selectedStartTime.getTimeInMillis();
                 selectedStartTime.set(year, monthOfYear, dayOfMonth);
 
                 String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
@@ -128,6 +139,7 @@ public class EditEvent extends BaseActivity {
             //將時間轉為12小時製顯示出來
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                selectedStartTimeMillis = selectedStartTime.getTimeInMillis();
                 selectedStartTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 selectedStartTime.set(Calendar.MINUTE, minute);
 
@@ -222,8 +234,8 @@ public class EditEvent extends BaseActivity {
             strEventLocation = null;
 
         Log.d("jia", "strEventName: "+String.valueOf(strEventName));
-        Log.d("jia", "strEventTarget: "+String.valueOf(strEventTarget));
-        Log.d("jia", "strEventLocation: "+String.valueOf(strEventLocation));
+//        Log.d("jia", "strEventTarget: "+String.valueOf(strEventTarget));
+//        Log.d("jia", "strEventLocation: "+String.valueOf(strEventLocation));
 
     }
 
