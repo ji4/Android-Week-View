@@ -18,4 +18,9 @@
     <string name="editevent_location">地點</string>
     <string name="editevent_eventlocation">活動地點</string>
     <string name="editevent_save">儲存</string>
+    <string name="editevent_year"> 年 </string>
+    <string name="editevent_month"> 月 </string>
+    <string name="editevent_day"> 日 </string>
+    <string name="editevent_am"> 上午 </string>
+    <string name="editevent_pm"> 下午 </string>
 </resources>

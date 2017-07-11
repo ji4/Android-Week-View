@@ -4,7 +4,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -41,8 +40,8 @@ public class EditEvent extends BaseActivity {
 
         findAllViews();
         setDisplayStartAndEndTime();
-        defineAllDialogs();
-        listenForTimeButtonClicks();
+        defineAllTimeDialogs();
+        listenForTimeButtonsClick();
 
         btn_save.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -73,6 +72,7 @@ public class EditEvent extends BaseActivity {
         clickedTimeMillis = it.getLongExtra("timeMillis", 0);
 
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy 年 MM 月 dd 日, EEE");
+//        SimpleDateFormat dateFormatter = new SimpleDateFormat(String.format("yyyy %s MM %s dd %s, EEE", R.string.editevent_year, R.string.editevent_month, R.string.editevent_day));
         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
 
         setStartDate(dateFormatter, clickedTimeMillis);
@@ -80,7 +80,6 @@ public class EditEvent extends BaseActivity {
 
         setEndDate(dateFormatter, clickedTimeMillis);
         setEndTime(timeFormatter, clickedTimeMillis);
-
     }
 
     public void setStartDate(SimpleDateFormat dateFormatter, long timeMillis){//start date
@@ -102,10 +101,9 @@ public class EditEvent extends BaseActivity {
         Date endTime = new Date(timeMillis + TIME_INTERVAL);
         String strEndTime = timeFormatter.format(endTime);
         btn_endTime.setText(strEndTime);
-
     }
 
-    public void defineAllDialogs(){
+    public void defineAllTimeDialogs(){
         //Set Received Time for TimePicker Dialogs
         selectedStartTime.setTimeInMillis(clickedTimeMillis);
         selectedEndTime.setTimeInMillis(clickedTimeMillis + TIME_INTERVAL);
@@ -120,10 +118,7 @@ public class EditEvent extends BaseActivity {
             //將設定的日期顯示出來
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                selectedStartTime.set(year, monthOfYear, dayOfMonth);
-
-                String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
-                btn_startDate.setText(year + " 年 " + (monthOfYear + 1) + " 月 " + dayOfMonth + " 日 " + dayOfWeek); //monthOfYear starts from 0
+                setDate(selectedStartTime, btn_startDate, year, monthOfYear, dayOfMonth);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)); //clickedTimeMillis's calendar
@@ -133,13 +128,9 @@ public class EditEvent extends BaseActivity {
             //將時間轉為12小時製顯示出來
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                selectedStartTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                selectedStartTime.set(Calendar.MINUTE, minute);
-
-                btn_startTime.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
-                        + ":" + minute + " " + (hourOfDay > 12 ? "下午" : "上午"));
+                setTime(selectedEndTime, btn_endTime, hourOfDay, minute);
             }
-        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE),
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE) + addTime.get(Calendar.MINUTE),
                 false);
 
         endDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() { //not completely set yet
@@ -147,10 +138,7 @@ public class EditEvent extends BaseActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                selectedEndTime.set(year, monthOfYear, dayOfMonth);
-
-                String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
-                btn_endDate.setText(year + " 年 " + (monthOfYear + 1) + " 月 " + dayOfMonth + " 日 " + dayOfWeek); //monthOfYear starts from 0
+                setDate(selectedEndTime, btn_endDate, year, monthOfYear, dayOfMonth);
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
@@ -159,17 +147,28 @@ public class EditEvent extends BaseActivity {
             //將時間轉為12小時製顯示出來
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                selectedEndTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                selectedEndTime.set(Calendar.MINUTE, minute);
-
-                btn_endTime.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
-                        + ":" + minute + " " + (hourOfDay > 12 ? "下午" : "上午"));
+                setTime(selectedEndTime, btn_endTime, hourOfDay, minute);
             }
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE) + addTime.get(Calendar.MINUTE),
                 false);
     }
 
-    public void listenForTimeButtonClicks(){
+    public void setDate(Calendar selectedDate, Button btn_Date, int year, int monthOfYear, int dayOfMonth){
+        selectedDate.set(year, monthOfYear, dayOfMonth);
+
+        String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
+        btn_Date.setText(year + R.string.editevent_year + (monthOfYear + 1) + R.string.editevent_month + dayOfMonth + R.string.editevent_day + dayOfWeek); //monthOfYear starts from 0
+    }
+
+    public void setTime(Calendar selectedTime, Button btn_time, int hourOfDay, int minute){
+        selectedTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        selectedTime.set(Calendar.MINUTE, minute);
+
+        btn_time.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
+                + ":" + minute + " " + (hourOfDay > 12 ? R.string.editevent_pm : R.string.editevent_am));
+    }
+
+    public void listenForTimeButtonsClick(){
         //Button Click Listeners
         btn_startDate.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -204,8 +203,6 @@ public class EditEvent extends BaseActivity {
     }
 
     public void saveEventData(Calendar startTime, Calendar endTime){
-        Log.d("jia", String.valueOf(startTime));
-        Log.d("jia", String.valueOf(endTime));
         getInputData();
 
         long startTimeMillis = startTime.getTimeInMillis();
