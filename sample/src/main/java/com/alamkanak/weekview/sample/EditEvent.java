@@ -25,13 +25,13 @@ public class EditEvent extends BaseActivity {
     Button btn_save;
     EditText et_eventName, et_eventTarget, et_eventLocation;
     String strEventName = null, strEventTarget = null, strEventLocation = null;
+    long TIME_INTERVAL = 600000; //10 mins
+    long clickedTimeMillis; //calendar's colum's time
+    //TimePickers
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
     TimePickerDialog startTimePickerDialog, endTimePickerDialog;
-    long TIME_INTERVAL = 600000; //10 mins
     Calendar selectedStartTime = Calendar.getInstance();
     Calendar selectedEndTime = Calendar.getInstance();
-    long clickedTimeMillis;
-    long selectedStartTimeMillis = 0, selectedEndTimeMillis = 0;
 
 
     @Override
@@ -47,13 +47,6 @@ public class EditEvent extends BaseActivity {
         btn_save.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("jia", "day of selectedStartTime: "+ String.valueOf(selectedStartTime));
-                if(selectedStartTimeMillis == clickedTimeMillis) { //default time
-                    selectedStartTime.setTimeInMillis(selectedStartTimeMillis);
-                    selectedEndTimeMillis = selectedStartTimeMillis + TIME_INTERVAL;
-                    selectedEndTime.setTimeInMillis(selectedEndTimeMillis);
-                }
-
                 saveEventData(selectedStartTime, selectedEndTime);
                 finish();
             }
@@ -62,7 +55,6 @@ public class EditEvent extends BaseActivity {
     }
 
     public void findAllViews(){
-        //Find all views.
         btn_startDate = (Button) findViewById(R.id.activity_edit_event_btn_startDate);
         btn_startTime = (Button) findViewById(R.id.activity_edit_event_btn_startTime);
         btn_endDate = (Button) findViewById(R.id.activity_edit_event_btn_endDate);
@@ -76,6 +68,7 @@ public class EditEvent extends BaseActivity {
     }
 
     public void setDisplayStartAndEndTime(){
+        //Receive Clicked Calendar Colum's Time
         Intent it = this.getIntent();
         clickedTimeMillis = it.getLongExtra("timeMillis", 0);
 
@@ -113,10 +106,12 @@ public class EditEvent extends BaseActivity {
     }
 
     public void defineAllDialogs(){
+        //Set Received Time for TimePicker Dialogs
+        selectedStartTime.setTimeInMillis(clickedTimeMillis);
+        selectedEndTime.setTimeInMillis(clickedTimeMillis + TIME_INTERVAL);
+
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTimeInMillis(clickedTimeMillis);
-
-        selectedStartTimeMillis = clickedTimeMillis;
 
         Calendar addTime = Calendar.getInstance();
         addTime.setTimeInMillis(TIME_INTERVAL);
@@ -125,21 +120,19 @@ public class EditEvent extends BaseActivity {
             //將設定的日期顯示出來
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                selectedStartTimeMillis = selectedStartTime.getTimeInMillis();
                 selectedStartTime.set(year, monthOfYear, dayOfMonth);
 
                 String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
                 btn_startDate.setText(year + " 年 " + (monthOfYear + 1) + " 月 " + dayOfMonth + " 日 " + dayOfWeek); //monthOfYear starts from 0
             }
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
+                calendar.get(Calendar.DAY_OF_MONTH)); //clickedTimeMillis's calendar
 
 
         startTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             //將時間轉為12小時製顯示出來
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                selectedStartTimeMillis = selectedStartTime.getTimeInMillis();
                 selectedStartTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 selectedStartTime.set(Calendar.MINUTE, minute);
 
@@ -232,11 +225,6 @@ public class EditEvent extends BaseActivity {
             strEventTarget = null;
         if(strEventLocation.length() == 0)
             strEventLocation = null;
-
-        Log.d("jia", "strEventName: "+String.valueOf(strEventName));
-//        Log.d("jia", "strEventTarget: "+String.valueOf(strEventTarget));
-//        Log.d("jia", "strEventLocation: "+String.valueOf(strEventLocation));
-
     }
 
     @Override
