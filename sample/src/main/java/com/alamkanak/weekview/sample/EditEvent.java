@@ -40,7 +40,7 @@ public class EditEvent extends BaseActivity {
         setContentView(R.layout.activity_edit_event);
 
         findAllViews();
-        setStartAndEndTime();
+        setDisplayStartAndEndTime();
         defineAllDialogs();
         listenForTimeButtonClicks();
 
@@ -75,7 +75,7 @@ public class EditEvent extends BaseActivity {
         btn_save = (Button) findViewById(R.id.activity_edit_event_btn_save);
     }
 
-    public void setStartAndEndTime(){
+    public void setDisplayStartAndEndTime(){
         Intent it = this.getIntent();
         clickedTimeMillis = it.getLongExtra("timeMillis", 0);
 
