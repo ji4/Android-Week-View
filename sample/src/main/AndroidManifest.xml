@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BasicActivity"
+            android:name=".DisplayEvents"
             android:label="@string/title_activity_basic" />
         <activity
             android:name=".AsynchronousActivity"
