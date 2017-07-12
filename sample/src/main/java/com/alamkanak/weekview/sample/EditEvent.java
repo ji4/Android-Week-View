@@ -26,6 +26,7 @@ public class EditEvent extends BaseActivity {
     String strEventName = null, strEventTarget = null, strEventLocation = null;
     long TIME_INTERVAL = 600000; //10 mins
     long clickedTimeMillis; //calendar's colum's time
+    long eventId = -1;
     //TimePickers
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
     TimePickerDialog startTimePickerDialog, endTimePickerDialog;
@@ -39,6 +40,7 @@ public class EditEvent extends BaseActivity {
         setContentView(R.layout.activity_edit_event);
 
         findAllViews();
+        receiveIntents();
         setDisplayStartAndEndTime();
         defineAllTimeDialogs();
         listenForTimeButtonsClick();
@@ -46,7 +48,19 @@ public class EditEvent extends BaseActivity {
         btn_save.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
-                saveEventData(selectedStartTime, selectedEndTime);
+                getInputData();
+
+                long startTimeMillis = selectedStartTime.getTimeInMillis();
+                long endTimeMillis = selectedEndTime.getTimeInMillis();
+
+                if(eventId == -1) {//save data
+//                saveEventData(selectedStartTime, selectedEndTime);
+                    DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
+
+                }
+                else {//update data
+                    DB.updateData(getApplicationContext(), eventId, startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
+                }
                 finish();
             }
         });
@@ -65,12 +79,17 @@ public class EditEvent extends BaseActivity {
 
         btn_save = (Button) findViewById(R.id.activity_edit_event_btn_save);
     }
-
-    public void setDisplayStartAndEndTime(){
+    public void receiveIntents(){
         //Receive Clicked Calendar Colum's Time
         Intent it = this.getIntent();
         clickedTimeMillis = it.getLongExtra("timeMillis", 0);
 
+
+        eventId = it.getLongExtra("evevtId", -1);
+    }
+
+
+    public void setDisplayStartAndEndTime(){
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy 年 MM 月 dd 日, EEE");
 //        SimpleDateFormat dateFormatter = new SimpleDateFormat(String.format("yyyy %s MM %s dd %s, EEE", R.string.editevent_year, R.string.editevent_month, R.string.editevent_day));
         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
@@ -202,14 +221,9 @@ public class EditEvent extends BaseActivity {
         return simpledateformat.format(date);
     }
 
-    public void saveEventData(Calendar startTime, Calendar endTime){
-        getInputData();
-
-        long startTimeMillis = startTime.getTimeInMillis();
-        long endTimeMillis = endTime.getTimeInMillis();
-
-        DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
-    }
+//    public void saveEventData(Calendar startTime, Calendar endTime){
+//
+//    }
 
     public void getInputData(){
         strEventName = et_eventName.getText().toString().trim();

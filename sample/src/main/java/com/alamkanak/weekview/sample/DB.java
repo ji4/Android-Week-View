@@ -147,6 +147,43 @@ public class DB extends BaseActivity{
         eventDataArrayList.add(eventData.getEventData());
     }
 
+    public static void updateData(Context context, long eventId, long startTimeMillis, long endTimeMillis, String eventName, String eventTarget, String eventLocation){
+        FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(FeedEntry.COLUMN_NAME_ENTRY_ID, 1);
+        values.put(FeedEntry.COLUMN_NAME_TITLE, "myEvent");
+        values.put(FeedEntry.COLUMN_NAME_EVENT_NAME, eventName);
+        values.put(FeedEntry.START_TIME, startTimeMillis);
+        values.put(FeedEntry.END_TIME, endTimeMillis);
+        values.put(FeedEntry.COLUMN_NAME_EVENT_TARGET, eventTarget);
+        values.put(FeedEntry.COLUMN_NAME_EVENT_LOCATION, eventLocation);
+
+        // Which row to update, based on the ID
+        String selection = FeedEntry._ID + " LIKE ?";
+        String[] selectionArgs = { String.valueOf(eventId) };
+
+        int count = db.update(
+                FeedEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
+        Log.d("count", String.valueOf(count));
+
+//        cursor = db.query(
+//                FeedEntry.TABLE_NAME,  // The table to query
+//                projection,                               // The columns to return
+//                FeedEntry.COLUMN_NAME_TITLE + "=?"/*selection*/,                                // The columns for the WHERE clause
+//                new String[]{"myEvent"} /*selectionArgs*/,                            // The values for the WHERE clause
+//                null,                                     // don't group the rows
+//                null,                                     // don't filter by row groups
+//                sortOrder                                 // The sort order
+//        );
+    }
+
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         return null;
