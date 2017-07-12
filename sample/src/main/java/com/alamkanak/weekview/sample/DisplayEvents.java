@@ -23,7 +23,9 @@ public class DisplayEvents extends BaseActivity {
         if(eventDataArrayList != null) {
             int i = 0;
             while(i < eventDataArrayList.size()) {
-                WeekViewEvent event = new WeekViewEvent(eventDataArrayList.get(i).eventId, getEventTitle(eventDataArrayList.get(i).startTime), eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
+                if(eventDataArrayList.get(i).eventName == null)
+                    eventDataArrayList.get(i).eventName = getString(R.string.displayevents_notitle);
+                WeekViewEvent event = new WeekViewEvent(eventDataArrayList.get(i).eventId, eventDataArrayList.get(i).eventName, eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
                 event.setColor(getResources().getColor(R.color.event_color_01));
                 events.add(event);
                 i++;
