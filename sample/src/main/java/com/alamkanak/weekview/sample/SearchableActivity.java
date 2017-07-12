@@ -13,6 +13,8 @@ import android.widget.ListView;
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.util.ArrayList;
+import com.alamkanak.weekview.sample.FeedReaderContract.FeedEntry;
+
 
 public class SearchableActivity extends AppCompatActivity {
     ArrayAdapter<String> myAdapter;
@@ -32,7 +34,7 @@ public class SearchableActivity extends AppCompatActivity {
 
 
         //Get saved data from DB
-        ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), query);
+        ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), FeedEntry.COLUMN_NAME_EVENT_NAME, query);
 //        myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, eventDataArrayList);
 //        listView.setAdapter(myAdapter);
 

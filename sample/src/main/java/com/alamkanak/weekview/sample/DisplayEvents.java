@@ -1,12 +1,11 @@
 package com.alamkanak.weekview.sample;
 
-import android.util.Log;
-
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import com.alamkanak.weekview.sample.FeedReaderContract.FeedEntry;
 
 public class DisplayEvents extends BaseActivity {
     private boolean eventMatches(WeekViewEvent event, int year, int month) {
@@ -20,7 +19,7 @@ public class DisplayEvents extends BaseActivity {
         List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
 
         //Get saved data from DB
-        ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), null);
+        ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), FeedEntry.COLUMN_NAME_TITLE, null);
         if(eventDataArrayList != null) {
             int i = 0;
             while(i < eventDataArrayList.size()) {

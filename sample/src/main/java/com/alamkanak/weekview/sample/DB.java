@@ -51,7 +51,7 @@ public class DB extends BaseActivity{
     }
 
 
-    public static ArrayList<EventData> getData(Context context, String query) {
+    public static ArrayList<EventData> getData(Context context, String selection, String selectionArgs) {
         FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
@@ -72,12 +72,12 @@ public class DB extends BaseActivity{
                 FeedEntry.START_TIME/*COLUMN_NAME_UPDATED*/ + " DESC";
 
         Cursor cursor;
-        if(query == null) {
+        if(selectionArgs == null) { //Select all
             cursor = db.query(
                     FeedEntry.TABLE_NAME,  // The table to query
                     projection,                               // The columns to return
-                    FeedEntry.COLUMN_NAME_TITLE + "=?"/*selection*/,                                // The columns for the WHERE clause
-                    new String[]{"myEvent"} /*selectionArgs*/,                            // The values for the WHERE clause
+                    FeedEntry.COLUMN_NAME_TITLE + "=?",                                // The columns for the WHERE clause
+                    new String[]{"myEvent"} ,                            // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order
@@ -87,8 +87,8 @@ public class DB extends BaseActivity{
             cursor = db.query(
                     FeedEntry.TABLE_NAME,  // The table to query
                     projection,                               // The columns to return
-                    FeedEntry.COLUMN_NAME_EVENT_NAME + "=?"/*selection*/,                                // The columns for the WHERE clause
-                    new String[]{query} /*selectionArgs*/,                            // The values for the WHERE clause
+                    selection + "=?",                                // The columns for the WHERE clause
+                    new String[]{selectionArgs} ,                            // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order
@@ -172,16 +172,6 @@ public class DB extends BaseActivity{
                 selectionArgs);
 
         Log.d("count", String.valueOf(count));
-
-//        cursor = db.query(
-//                FeedEntry.TABLE_NAME,  // The table to query
-//                projection,                               // The columns to return
-//                FeedEntry.COLUMN_NAME_TITLE + "=?"/*selection*/,                                // The columns for the WHERE clause
-//                new String[]{"myEvent"} /*selectionArgs*/,                            // The values for the WHERE clause
-//                null,                                     // don't group the rows
-//                null,                                     // don't filter by row groups
-//                sortOrder                                 // The sort order
-//        );
     }
 
     @Override

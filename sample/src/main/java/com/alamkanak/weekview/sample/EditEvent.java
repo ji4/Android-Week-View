@@ -13,10 +13,12 @@ import android.widget.TimePicker;
 import com.alamkanak.weekview.WeekViewEvent;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import com.alamkanak.weekview.sample.FeedReaderContract.FeedEntry;
 
 
 public class EditEvent extends BaseActivity {
@@ -54,7 +56,6 @@ public class EditEvent extends BaseActivity {
                 long endTimeMillis = selectedEndTime.getTimeInMillis();
 
                 if(eventId == -1) {//save data
-//                saveEventData(selectedStartTime, selectedEndTime);
                     DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
 
                 }
@@ -80,12 +81,20 @@ public class EditEvent extends BaseActivity {
         btn_save = (Button) findViewById(R.id.activity_edit_event_btn_save);
     }
     public void receiveIntents(){
-        //Receive Clicked Calendar Colum's Time
+        //Receive Clicked Calendar Empty Colum's Time
         Intent it = this.getIntent();
         clickedTimeMillis = it.getLongExtra("timeMillis", 0);
 
-
-        eventId = it.getLongExtra("evevtId", -1);
+        //Receive Clicked Calendar Existent Event
+        eventId = it.getLongExtra("eventId", -1);
+        if(eventId != -1) { //Edit existent event
+            ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), FeedEntry._ID, String.valueOf(eventId));
+            assert eventDataArrayList != null;
+            EventData eventData = eventDataArrayList.get(0);
+            et_eventName.setText(eventData.eventName);
+            et_eventTarget.setText(eventData.eventTarget);
+            et_eventLocation.setText(eventData.eventLocation);
+        }
     }
 
 
@@ -220,10 +229,6 @@ public class EditEvent extends BaseActivity {
         Date date = new Date(year, monthOfYear, dayOfMonth);
         return simpledateformat.format(date);
     }
-
-//    public void saveEventData(Calendar startTime, Calendar endTime){
-//
-//    }
 
     public void getInputData(){
         strEventName = et_eventName.getText().toString().trim();
