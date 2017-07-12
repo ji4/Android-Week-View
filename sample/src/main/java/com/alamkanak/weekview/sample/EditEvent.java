@@ -36,6 +36,8 @@ public class EditEvent extends BaseActivity {
     TimePickerDialog startTimePickerDialog, endTimePickerDialog;
     Calendar selectedStartTime = Calendar.getInstance();
     Calendar selectedEndTime = Calendar.getInstance();
+    long startTimeMillis;
+    long endTimeMillis;
 
 
     @Override
@@ -54,14 +56,11 @@ public class EditEvent extends BaseActivity {
             public void onClick(View view) {
                 getInputData();
 
-                long startTimeMillis = selectedStartTime.getTimeInMillis();
-                long endTimeMillis = selectedEndTime.getTimeInMillis();
-
                 if(eventId == EMPTY_EVENT) {//save data
-                    DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
+                    DB.saveData(getApplicationContext(), selectedStartTime.getTimeInMillis(), selectedEndTime.getTimeInMillis(), strEventName, strEventTarget, strEventLocation);
                 }
                 else {//update data
-                    DB.updateData(getApplicationContext(), eventId, startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
+                    DB.updateData(getApplicationContext(), eventId, selectedStartTime.getTimeInMillis(), selectedEndTime.getTimeInMillis(), strEventName, strEventTarget, strEventLocation);
                 }
                 finish();
             }
@@ -103,8 +102,8 @@ public class EditEvent extends BaseActivity {
         SimpleDateFormat dateFormatter = new SimpleDateFormat(String.format("yyyy %s MM %s dd %s, EEE", getString(R.string.editevent_year), getString(R.string.editevent_month), getString(R.string.editevent_day)));
         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
 
-        long startTimeMillis = clickedTimeMillis;
-        long endTimeMillis = clickedTimeMillis;
+        startTimeMillis = clickedTimeMillis;
+        endTimeMillis = clickedTimeMillis;
         if(eventId != EMPTY_EVENT){
             startTimeMillis = eventData.startTime.getTimeInMillis();
             endTimeMillis = eventData.endTime.getTimeInMillis();
@@ -125,11 +124,13 @@ public class EditEvent extends BaseActivity {
 
     public void defineAllTimeDialogs(){
         //Set Received Time for TimePicker Dialogs
-        selectedStartTime.setTimeInMillis(clickedTimeMillis);
-        selectedEndTime.setTimeInMillis(clickedTimeMillis + TIME_INTERVAL);
+        if(eventId == EMPTY_EVENT) endTimeMillis += TIME_INTERVAL;
+
+        selectedStartTime.setTimeInMillis(startTimeMillis);
+        selectedEndTime.setTimeInMillis(endTimeMillis);
 
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTimeInMillis(clickedTimeMillis);
+        calendar.setTimeInMillis(startTimeMillis);
 
         Calendar addTime = Calendar.getInstance();
         addTime.setTimeInMillis(TIME_INTERVAL);
@@ -148,8 +149,10 @@ public class EditEvent extends BaseActivity {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 setTime(selectedStartTime, btn_startTime, hourOfDay, minute);
             }
-        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE) + addTime.get(Calendar.MINUTE),
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE),
                 false);
+
+        calendar.setTimeInMillis(endTimeMillis);
 
         endDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {//設定日期
             @Override
@@ -165,7 +168,7 @@ public class EditEvent extends BaseActivity {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 setTime(selectedEndTime, btn_endTime, hourOfDay, minute);
             }
-        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE) + addTime.get(Calendar.MINUTE),
+        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE),
                 false);
     }
 
