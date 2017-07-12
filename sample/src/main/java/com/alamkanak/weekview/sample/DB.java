@@ -82,7 +82,6 @@ public class DB extends BaseActivity{
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order
             );
-            Log.d("jia", "query == null");
         }
         else{
             cursor = db.query(
@@ -94,7 +93,6 @@ public class DB extends BaseActivity{
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order
             );
-            Log.d("jia", "query != null");
 
         }
 
@@ -112,14 +110,15 @@ public class DB extends BaseActivity{
 
         }
         if(!eventDataArrayList.isEmpty()) {
-            Log.d("jia", "eventDataArrayList NOT EMPTY ");
             return eventDataArrayList;
         }
-        Log.d("jia", "eventDataArrayList IS EMPTY ");
         return null;
     }
 
     public static void getAndAddDataToList(Cursor cursor, ArrayList eventDataArrayList){
+        long eventId = cursor.getLong(
+                cursor.getColumnIndexOrThrow(FeedEntry._ID)
+        );
         long startTimeMillisec = cursor.getLong(
                 cursor.getColumnIndexOrThrow(FeedEntry.START_TIME)
         );
@@ -144,7 +143,7 @@ public class DB extends BaseActivity{
         endTime.setTimeInMillis(endTimeMillisec);
         Log.d("jia", "endTime: " + String.valueOf(endTime));
 
-        EventData eventData = new EventData(startTime, endTime, eventName, eventTarget, eventLocation);
+        EventData eventData = new EventData(eventId, startTime, endTime, eventName, eventTarget, eventLocation);
         eventDataArrayList.add(eventData.getEventData());
     }
 
@@ -154,10 +153,12 @@ public class DB extends BaseActivity{
     }
 }
 class EventData{
+    long eventId;
     Calendar startTime, endTime;
     String eventName, eventTarget, eventLocation;
 
-    public EventData(Calendar startTime, Calendar endTime, String eventName, String eventTarget, String eventLocation) {
+    public EventData(long eventId, Calendar startTime, Calendar endTime, String eventName, String eventTarget, String eventLocation) {
+        this.eventId = eventId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.eventName = eventName;
@@ -166,7 +167,7 @@ class EventData{
     }
 
     EventData getEventData(){
-        return new EventData(startTime, endTime, eventName, eventTarget, eventLocation);
+        return new EventData(eventId, startTime, endTime, eventName, eventTarget, eventLocation);
     }
 
 }

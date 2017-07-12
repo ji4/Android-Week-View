@@ -21,18 +21,12 @@ public class DisplayEvents extends BaseActivity {
 
         //Get saved data from DB
         ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), null);
-        Log.d("jia", "eventDataArrayList: " + String.valueOf(eventDataArrayList));
         if(eventDataArrayList != null) {
             int i = 0;
             while(i < eventDataArrayList.size()) {
-                WeekViewEvent event = new WeekViewEvent(1, getEventTitle(eventDataArrayList.get(i).startTime), eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
-//                WeekViewEvent event = new WeekViewEvent(1, eventDataArrayList.get(i).eventName, eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
-                Log.d("jia", "startTime:　" + eventDataArrayList.get(i).startTime);
-                Log.d("jia", "endTime:　  " + eventDataArrayList.get(i).endTime);
-                Log.d("jia", "eventName:　" + eventDataArrayList.get(i).eventName);
+                WeekViewEvent event = new WeekViewEvent(eventDataArrayList.get(i).eventId, getEventTitle(eventDataArrayList.get(i).startTime), eventDataArrayList.get(i).startTime, eventDataArrayList.get(i).endTime);
                 event.setColor(getResources().getColor(R.color.event_color_01));
                 events.add(event);
-                Log.d("jia", "i: "+i);
                 i++;
             }
         }
