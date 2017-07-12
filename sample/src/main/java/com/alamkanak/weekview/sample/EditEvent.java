@@ -28,7 +28,9 @@ public class EditEvent extends BaseActivity {
     String strEventName = null, strEventTarget = null, strEventLocation = null;
     long TIME_INTERVAL = 600000; //10 mins
     long clickedTimeMillis; //calendar's colum's time
-    long eventId = -1;
+    static final int EMPTY_EVENT = -1;
+    long eventId = EMPTY_EVENT;
+    EventData eventData;
     //TimePickers
     DatePickerDialog startDatePickerDialog, endDatePickerDialog;
     TimePickerDialog startTimePickerDialog, endTimePickerDialog;
@@ -55,9 +57,8 @@ public class EditEvent extends BaseActivity {
                 long startTimeMillis = selectedStartTime.getTimeInMillis();
                 long endTimeMillis = selectedEndTime.getTimeInMillis();
 
-                if(eventId == -1) {//save data
+                if(eventId == EMPTY_EVENT) {//save data
                     DB.saveData(getApplicationContext(), startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
-
                 }
                 else {//update data
                     DB.updateData(getApplicationContext(), eventId, startTimeMillis, endTimeMillis, strEventName, strEventTarget, strEventLocation);
@@ -86,11 +87,11 @@ public class EditEvent extends BaseActivity {
         clickedTimeMillis = it.getLongExtra("timeMillis", 0);
 
         //Receive Clicked Calendar Existent Event
-        eventId = it.getLongExtra("eventId", -1);
-        if(eventId != -1) { //Edit existent event
+        eventId = it.getLongExtra("eventId", EMPTY_EVENT);
+        if(eventId != EMPTY_EVENT) { //Edit existent event
             ArrayList<EventData> eventDataArrayList = DB.getData(getApplicationContext(), FeedEntry._ID, String.valueOf(eventId));
             assert eventDataArrayList != null;
-            EventData eventData = eventDataArrayList.get(0);
+            eventData = eventDataArrayList.get(0);
             et_eventName.setText(eventData.eventName);
             et_eventTarget.setText(eventData.eventTarget);
             et_eventLocation.setText(eventData.eventLocation);
@@ -99,36 +100,27 @@ public class EditEvent extends BaseActivity {
 
 
     public void setDisplayStartAndEndTime(){
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy 年 MM 月 dd 日, EEE");
-//        SimpleDateFormat dateFormatter = new SimpleDateFormat(String.format("yyyy %s MM %s dd %s, EEE", R.string.editevent_year, R.string.editevent_month, R.string.editevent_day));
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(String.format("yyyy %s MM %s dd %s, EEE", getString(R.string.editevent_year), getString(R.string.editevent_month), getString(R.string.editevent_day)));
         SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
 
-        setStartDate(dateFormatter, clickedTimeMillis);
-        setStartTime(timeFormatter, clickedTimeMillis);
+        long startTimeMillis = clickedTimeMillis;
+        long endTimeMillis = clickedTimeMillis;
+        if(eventId != EMPTY_EVENT){
+            startTimeMillis = eventData.startTime.getTimeInMillis();
+            endTimeMillis = eventData.endTime.getTimeInMillis();
+        }
 
-        setEndDate(dateFormatter, clickedTimeMillis);
-        setEndTime(timeFormatter, clickedTimeMillis);
+        setDateBtnText(btn_startDate, dateFormatter, startTimeMillis, false);
+        setDateBtnText(btn_startTime, timeFormatter, startTimeMillis, false);
+        setDateBtnText(btn_endDate, dateFormatter, endTimeMillis, true);
+        setDateBtnText(btn_endTime, timeFormatter, endTimeMillis, true);
     }
 
-    public void setStartDate(SimpleDateFormat dateFormatter, long timeMillis){//start date
-        Date startDate = new Date(timeMillis);
-        String strDate = dateFormatter.format(startDate);
-        btn_startDate.setText(strDate);
-    }
-    public void setStartTime(SimpleDateFormat timeFormatter, long timeMillis) {//start time
-        Date startTime = new Date(timeMillis);
-        String strStartTime = timeFormatter.format(startTime);
-        btn_startTime.setText(strStartTime);
-    }
-    public void setEndDate(SimpleDateFormat dateFormatter, long timeMillis){//end date
-        Date endDate = new Date(timeMillis + TIME_INTERVAL);
-        String strEndDate = dateFormatter.format(endDate);
-        btn_endDate.setText(strEndDate);
-    }
-    public void setEndTime(SimpleDateFormat timeFormatter, long timeMillis){//end time
-        Date endTime = new Date(timeMillis + TIME_INTERVAL);
-        String strEndTime = timeFormatter.format(endTime);
-        btn_endTime.setText(strEndTime);
+    public void setDateBtnText(Button btn, SimpleDateFormat formatter, long timeMillis, Boolean isEndDate){
+        if(isEndDate && eventId == EMPTY_EVENT) timeMillis += TIME_INTERVAL;
+        Date date = new Date(timeMillis);
+        String strDate = formatter.format(date);
+        btn.setText(strDate);
     }
 
     public void defineAllTimeDialogs(){
@@ -142,8 +134,7 @@ public class EditEvent extends BaseActivity {
         Calendar addTime = Calendar.getInstance();
         addTime.setTimeInMillis(TIME_INTERVAL);
 
-        startDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            //將設定的日期顯示出來
+        startDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {//設定日期
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 setDate(selectedStartTime, btn_startDate, year, monthOfYear, dayOfMonth);
@@ -152,17 +143,15 @@ public class EditEvent extends BaseActivity {
                 calendar.get(Calendar.DAY_OF_MONTH)); //clickedTimeMillis's calendar
 
 
-        startTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            //將時間轉為12小時製顯示出來
+        startTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {//將時間轉為12小時製
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                setTime(selectedEndTime, btn_endTime, hourOfDay, minute);
+                setTime(selectedStartTime, btn_startTime, hourOfDay, minute);
             }
         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(calendar.MINUTE) + addTime.get(Calendar.MINUTE),
                 false);
 
-        endDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() { //not completely set yet
-            //將設定的日期顯示出來
+        endDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {//設定日期
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
@@ -171,8 +160,7 @@ public class EditEvent extends BaseActivity {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
 
-        endTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            //將時間轉為12小時製顯示出來
+        endTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {//將時間轉為12小時製
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 setTime(selectedEndTime, btn_endTime, hourOfDay, minute);
@@ -185,7 +173,10 @@ public class EditEvent extends BaseActivity {
         selectedDate.set(year, monthOfYear, dayOfMonth);
 
         String dayOfWeek = getDayOfWeek(year, monthOfYear, dayOfMonth - 1);
-        btn_Date.setText(year + R.string.editevent_year + (monthOfYear + 1) + R.string.editevent_month + dayOfMonth + R.string.editevent_day + dayOfWeek); //monthOfYear starts from 0
+        btn_Date.setText(year + " " + getString(R.string.editevent_year) + " "
+                        + (monthOfYear + 1) + " " + getString(R.string.editevent_month) + " "
+                        + dayOfMonth +  " " +getString(R.string.editevent_day) + " "
+                        + dayOfWeek); //monthOfYear starts from 0
     }
 
     public void setTime(Calendar selectedTime, Button btn_time, int hourOfDay, int minute){
@@ -193,7 +184,7 @@ public class EditEvent extends BaseActivity {
         selectedTime.set(Calendar.MINUTE, minute);
 
         btn_time.setText((hourOfDay > 12 ? hourOfDay - 12 : hourOfDay)
-                + ":" + minute + " " + (hourOfDay > 12 ? R.string.editevent_pm : R.string.editevent_am));
+                + ":" + minute + " " + (hourOfDay > 12 ? getString(R.string.editevent_pm) : getString(R.string.editevent_am)));
     }
 
     public void listenForTimeButtonsClick(){
