@@ -174,6 +174,18 @@ public class DB extends BaseActivity{
         Log.d("count", String.valueOf(count));
     }
 
+    public static void deleteData(Context context, long eventId){
+        FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(context);
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // Define 'where' part of query.
+        String selection = FeedEntry._ID + " LIKE ?";
+        // Specify arguments in placeholder order.
+        String[] selectionArgs = { String.valueOf(eventId) };
+        // Issue SQL statement.
+        db.delete(FeedEntry.TABLE_NAME, selection, selectionArgs);
+    }
+
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         return null;
