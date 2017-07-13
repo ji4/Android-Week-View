@@ -41,5 +41,4 @@ public class DisplayEvents extends BaseActivity {
         }
         return matchedEvents;
     }
-
-}
+    }

@@ -1,5 +1,6 @@
 package com.alamkanak.weekview.sample;
 
+import android.app.DialogFragment;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -211,7 +212,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
 
     @Override
     public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+        showListDialog(this);
     }
 
     @Override
@@ -224,6 +225,11 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
         Intent it = new Intent(BaseActivity.this, EditEvent.class);
         it.putExtra("timeMillis", getEventTime(time));
         startActivity(it);
+    }
+
+    public void showListDialog(Context context) {
+        DialogFragment newFragment = new FireMissilesDialogFragment(context);
+        newFragment.show(getFragmentManager(), "missiles");
     }
 
     public WeekView getWeekView() {
