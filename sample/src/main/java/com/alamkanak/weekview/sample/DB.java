@@ -194,7 +194,7 @@ class EventData{
     }
 
     EventData getEventData(){
-        return new EventData(eventId, startTime, endTime, eventName, eventTarget, eventLocation);
+        return this;
     }
 
 }
