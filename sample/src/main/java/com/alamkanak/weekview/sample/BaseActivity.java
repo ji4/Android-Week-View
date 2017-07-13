@@ -228,7 +228,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
     }
 
     public void showListDialog(Context context) {
-        DialogFragment newFragment = new FireMissilesDialogFragment(context);
+        DialogFragment newFragment = new CalendarDialogFragment(context);
         newFragment.show(getFragmentManager(), "missiles");
     }
 

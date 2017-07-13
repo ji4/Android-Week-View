@@ -26,4 +26,7 @@
     <string name="displayevents_notitle">(無標題)</string>
     <string name="displayevents_plzselect">Please select: </string>
     <string name="displayevents_deleteevent">刪除活動</string>
+    <string name="displayevents_confirmToDeleteEvent">確認刪除?</string>
+    <string name="displayevents_delete">刪除</string>
+    <string name="cancel">取消</string>
 </resources>
