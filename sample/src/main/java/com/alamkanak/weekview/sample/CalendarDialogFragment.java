@@ -14,32 +14,33 @@ import android.support.v7.app.AlertDialog;
 public class CalendarDialogFragment extends DialogFragment {
     Context context;
     long eventId;
-    String eventName;
+    String eventName, eventTime;
 
-    public CalendarDialogFragment(Context context, long eventId, String eventName) {
+    public CalendarDialogFragment(Context context, long eventId, String eventName, String eventTime) {
         this.context = context;
         this.eventId = eventId;
         this.eventName = eventName;
+        this.eventTime = eventTime;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(eventName)
+        builder.setTitle(eventTime + ", " + eventName)
                 .setItems(R.array.event_array, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // The 'which' argument contains the index position
                         // of the selected item
                         switch(which){
                             case 0:
-                                showDeleteDialog(eventId, eventName);
+                                showConfirmDialog(eventId);
                         }
                     }
                 });
         return builder.create();
     }
 
-    public void showDeleteDialog(long eventId, String eventName) {
+    public void showConfirmDialog(long eventId) {
         DialogFragment newFragment = new DeleteConfirmDialogFragment(eventId);
         newFragment.show(getFragmentManager(), "missiles");
     }

@@ -212,7 +212,7 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
 
     @Override
     public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-        showListDialog(this, event.getId(), event.getName());
+        showListDialog(this, event.getId(), event.getName(), formattedEventTime(event));
     }
 
     @Override
@@ -227,8 +227,14 @@ public abstract class BaseActivity extends AppCompatActivity implements WeekView
         startActivity(it);
     }
 
-    public void showListDialog(Context context, long eventId, String eventName) {
-        DialogFragment newFragment = new CalendarDialogFragment(context, eventId, eventName);
+    public String formattedEventTime(WeekViewEvent event){
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("ahh:mm");
+        String startTime = timeFormatter.format(event.getStartTime().getTimeInMillis());
+        return startTime;
+    }
+
+    public void showListDialog(Context context, long eventId, String eventName, String eventTime) {
+        DialogFragment newFragment = new CalendarDialogFragment(context, eventId, eventName, eventTime);
         newFragment.show(getFragmentManager(), "missiles");
     }
 
